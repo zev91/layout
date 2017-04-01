@@ -1,0 +1,20 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+  .content-a{
+    width: 1200px;
+    margin: 10px auto;
+  }
+  .img-row{
+    margin-bottom: 4px;
+  }
+  .img-row:after{
+    content: "";
+    display: block;
+    clear: both;
+  }
+  .img-box{
+    float: left;
+    margin: 0 4px;
+  }
