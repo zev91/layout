@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style type="text/css">
+*{
+  margin: 0;
+  padding: 0;
+}
+  .content{
+    width: 1200px;
+    margin: 10px auto;
+  }
+  .img-row{
+    margin-bottom: 4px;
+  }
+  .img-row:after{
+    content: "";
+    display: block;
+    clear: both;
+  }
+  .img-box{
+    float: left;
+    margin: 0 4px;
+  }
+   
+</style>
+</head>
+<body>
+<div class="content">
+</div>
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript">
+  function Barrels($ct){
+     this.$ct=$ct;
+     this.imgNum=50;
+     this.baseHeight=200;
+     this.rowList=[];
+     this.imgIndex=0;
+     this.marginRight=10;
+     this.loadImg();
+  }
+  Barrels.prototype={
+
+    getImgUrls:function(num){
+      var width,
+          height,
+          urls=[];
+      for(var i=0;i<num;i++){
+        width=Math.floor(Math.random()*500+400);
+        height=Math.floor(Math.random()*500+300);
+        urls.push("https://unsplash.it/"+width+"/"+height);
+      } 
+      return urls;   
+    },
+    loadImg:function(){
+      var _this = this;
+      var imgs = this.getImgUrls(_this.imgNum);
+      $.each(imgs,function(idx,url){
+        var img = new Image();
+        img.src = url;
+        img.onload = function(){
+          _this.imgIndex++;
+          var originWidth = img.width;
+          var originHeight = img.height;
+          var ratio = originWidth/originHeight;
+          var imgInfo = {
+            target:img,
+            width:_this.baseHeight*ratio,
+            height:_this.baseHeight
+          }
+          _this.render(imgInfo)
+        }
+      });
+    },
+    render:function(imgInfo){
+      var contentWidth = this.$ct.width(),
+          rowWidth = 0;
+          lastImgInfo = imgInfo;
+          var newRowHeight = 0;
+      
+      this.rowList.push(imgInfo) ;
+      for(var i=0;i<this.rowList.length;i++){
+          rowWidth+=this.rowList[i].width+this.marginRight;
+      }
+      if(rowWidth>contentWidth){
+        this.rowList.pop();
+        rowWidth = rowWidth-lastImgInfo.width-this.marginRight;
+        newRowHeight = (contentWidth*this.baseHeight)/rowWidth;
+        this.layout(newRowHeight);
+        this.rowList = [];
+        this.rowList.push(lastImgInfo);
+      }
+      if((this.imgIndex == this.imgNum)&&(rowWidth<contentWidth)){
+        newRowHeight = this.baseHeight;
+        this.layout(newRowHeight);
+      }
+    },
+    layout:function (newRowHeight){
+      var _this = this;
+      var $rowCt = $("<div class='img-row'><div>");
+      $.each(this.rowList,function(idx,imgInfo){
+        var $imgCt = $("<div class='img-box'><div>");
+        var $img = $(imgInfo.target);
+
+        var newImgWidth = (imgInfo.width+_this.marginRight)*(newRowHeight/_this.baseHeight)-_this.marginRight;
+        $img.height(newRowHeight);
+        $img.width(newImgWidth);
+        $imgCt.append($img);
+        $rowCt.append($imgCt);
+      })
+      
+      this.$ct.append($rowCt);
+    }
+  },
+  new Barrels($(".content"));
+</script>
+</body>
+</html>
