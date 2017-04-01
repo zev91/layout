@@ -38,7 +38,7 @@ WaterFall.init()
 
   function Barrels($ct){
      this.$ct=$ct;
-     this.imgNum=50;
+     this.imgNum=20;
      this.baseHeight=200;
      this.rowList=[];
      this.imgIndex=0;
